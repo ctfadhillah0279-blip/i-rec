@@ -1,0 +1,1348 @@
+<!doctype html>
+<html lang="ms" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>e-REKOD - Sistem Pengurusan Rekod</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+body {
+  box-sizing: border-box;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, .heading-font {
+  font-family: 'Outfit', sans-serif;
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.tab-btn {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+
+.tab-btn.active::after {
+  width: 100%;
+}
+
+.tab-btn.active {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.form-input {
+  transition: all 0.2s ease;
+  border: 2px solid #e5e7eb;
+}
+
+.form-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  outline: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.5);
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.table-row {
+  transition: all 0.2s ease;
+}
+
+.table-row:hover {
+  background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  transform: translateX(4px);
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-used {
+  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+  color: #166534;
+}
+
+.status-unused {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #92400e;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 16px;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.toast-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.toast-error {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+@keyframes slideIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(120%); }
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+.loading-spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #ffffff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.delete-btn {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.table-row:hover .delete-btn {
+  opacity: 1;
+}
+
+.confirm-delete {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fecaca;
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.logo-text {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.75rem;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.icon-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+</style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full" style="background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);"><!-- Login Screen -->
+  <div id="loginScreen" class="h-full flex items-center justify-center p-4">
+   <div class="card glass-effect p-10 max-w-md w-full">
+    <div class="text-center mb-8">
+     <div class="w-24 h-24 rounded-3xl icon-gradient flex items-center justify-center mx-auto mb-6 shadow-2xl transform hover:scale-105 transition-transform">
+      <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+     </div>
+     <h1 class="logo-text mb-3">e-REKOD</h1>
+     <p class="text-gray-600 font-semibold text-lg">Sistem Pengurusan Rekod</p>
+    </div>
+    <form id="loginForm" class="space-y-5">
+     <div><label class="block text-sm font-semibold text-gray-700 mb-2">Emel Rasmi</label> <input type="email" id="loginEmail" class="form-input w-full p-4 rounded-xl text-base" placeholder="nama@esyariah.gov.my" required>
+      <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+       <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+       </svg> Gunakan emel @esyariah.gov.my</p>
+     </div><button type="submit" id="loginBtn" class="btn-primary w-full text-white px-6 py-4 rounded-xl font-bold text-base"> Log Masuk ke Sistem </button>
+    </form>
+   </div>
+  </div><!-- Main App -->
+  <div id="app" class="h-full overflow-auto p-4 md:p-6 lg:p-8 hidden">
+   <div class="max-w-7xl mx-auto"><!-- Header Card -->
+    <div class="card glass-effect p-6 mb-6">
+     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex items-center gap-4">
+       <div class="w-14 h-14 rounded-2xl icon-gradient flex items-center justify-center shadow-xl">
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="dashboardTitle" class="logo-text text-3xl md:text-4xl">e-REKOD</h1>
+        <p class="text-gray-600 text-sm font-medium mt-1">Sistem Pengurusan Rekod</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-3 flex-wrap">
+       <div id="userInfo"></div><button onclick="logout()" class="text-gray-600 hover:text-gray-800 text-sm font-semibold flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg> Log Keluar </button>
+       <div class="flex items-center gap-2 px-4 py-2 rounded-xl" style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.15) 0%, rgba(0, 242, 254, 0.15) 100%);">
+        <div class="pulse-dot"></div><span class="text-sm font-bold" style="color: #0891b2;">Aktif</span>
+       </div>
+       <div id="recordCount" class="px-4 py-2 rounded-xl font-bold text-sm" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%); color: #667eea;">
+        0 Rekod
+       </div>
+      </div>
+     </div>
+    </div><!-- Tabs -->
+    <div class="card glass-effect mb-6">
+     <div class="flex flex-wrap border-b border-gray-200"><button class="tab-btn active px-6 py-4 font-semibold text-gray-600" data-tab="laporan"> <span class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg><span>Dashboard</span> </span> </button> <button class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="alasan"> <span class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg><span id="alasanTabLabel">Alasan Penghakiman</span> </span> </button> <button class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="kertas"> <span class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg><span id="kertasTabLabel">Kertas Perintah</span> </span> </button> <button class="tab-btn px-6 py-4 font-semibold text-gray-600" data-tab="tetapan" id="tetapanTab"> <span class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg><span>Tetapan</span> </span> </button>
+     </div>
+    </div><!-- Tab Contents --> <!-- Laporan Tab -->
+    <div id="laporan" class="tab-content">
+     <div class="grid lg:grid-cols-3 gap-6 mb-6">
+      <div class="card glass-effect p-6 stat-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="text-sm text-gray-600 mb-1 font-semibold">Jumlah Alasan</p>
+         <p id="totalAlasan" class="text-4xl font-bold heading-font" style="color: #667eea;">0</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+         </svg>
+        </div>
+       </div>
+      </div>
+      <div class="card glass-effect p-6 stat-card" style="background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);">
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="text-sm text-gray-600 mb-1 font-semibold">Kertas Perintah</p>
+         <p id="totalKertas" class="text-4xl font-bold heading-font" style="color: #4facfe;">0</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+         </svg>
+        </div>
+       </div>
+      </div>
+      <div class="card glass-effect p-6 stat-card" style="background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);">
+       <div class="flex items-center justify-between">
+        <div>
+         <p class="text-sm text-gray-600 mb-1 font-semibold">Pengguna Aktif</p>
+         <p id="totalUsers" class="text-4xl font-bold heading-font" style="color: #f093fb;">0</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+         </svg>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="grid lg:grid-cols-2 gap-6">
+      <div class="card glass-effect p-6">
+       <h2 class="text-xl font-bold text-gray-800 mb-4 heading-font flex items-center gap-2">
+        <div class="w-2 h-8 rounded-full" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div> Ringkasan Mengikut Unit</h2>
+       <div id="laporanMahkamah" class="space-y-3"></div>
+      </div>
+      <div class="card glass-effect p-6">
+       <h2 class="text-xl font-bold text-gray-800 mb-4 heading-font flex items-center gap-2">
+        <div class="w-2 h-8 rounded-full" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div> Status Kertas Perintah</h2>
+       <div id="laporanStatus" class="space-y-3"></div>
+      </div>
+     </div>
+    </div><!-- Alasan Tab -->
+    <div id="alasan" class="tab-content">
+     <div class="grid lg:grid-cols-3 gap-6"><!-- Form -->
+      <div class="lg:col-span-1">
+       <div class="card glass-effect p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font flex items-center gap-2">
+         <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+         </div> Tambah Alasan</h2>
+        <form id="formAlasan" class="space-y-4">
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Unit/Daerah</label> <input type="text" name="mahkamahDaerah" class="form-input w-full p-3 rounded-xl" placeholder="Contoh: Unit Kuala Lumpur" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Peringkat</label> <select name="peringkatMahkamah" id="peringkatAlasan" class="form-input w-full p-3 rounded-xl" required> <option value="">Pilih Peringkat</option> <option value="Mahkamah Tinggi Syariah">Mahkamah Tinggi Syariah</option> <option value="Mahkamah Rendah Syariah">Mahkamah Rendah Syariah</option> </select>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Bulan</label> <input type="month" name="bulan" class="form-input w-full p-3 rounded-xl" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Bilangan Alasan</label> <input type="number" name="bilanganAlasan" class="form-input w-full p-3 rounded-xl" placeholder="Contoh: 5" min="1" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center justify-between"> <span>Maklumat Kes</span> <button type="button" id="addKesBtn" class="text-sm font-bold flex items-center gap-1 px-3 py-1 rounded-lg" style="color: #667eea; background: rgba(102, 126, 234, 0.1);">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg> Tambah </button> </label>
+          <div id="kesContainer" class="space-y-3">
+           <div class="kes-row grid grid-cols-12 gap-2"><input type="text" name="noKes[]" class="form-input col-span-5 p-2 rounded-lg text-sm" placeholder="No Kes" required> <input type="text" name="jenisTuntutan[]" class="form-input col-span-6 p-2 rounded-lg text-sm" placeholder="Jenis Tuntutan" required> <button type="button" class="remove-kes-btn col-span-1 text-red-500 hover:text-red-700 opacity-0 pointer-events-none transition-opacity">
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+             </svg></button>
+           </div>
+          </div>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Link Muat Naik</label> <input type="url" name="linkMuatNaik" id="linkMuatNaikAlasan" class="form-input w-full p-3 rounded-xl" placeholder="https://..." readonly style="background: rgba(102, 126, 234, 0.05);">
+          <p class="text-xs text-gray-500 mt-2 flex items-center gap-1">
+           <svg class="w-3 h-3" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+           </svg> Link akan ditetapkan berdasarkan peringkat mahkamah</p>
+         </div><button type="submit" id="submitAlasan" class="btn-primary w-full text-white px-6 py-3 rounded-xl font-bold"> Hantar Alasan </button>
+        </form>
+       </div>
+      </div><!-- Table -->
+      <div class="lg:col-span-2">
+       <div class="card glass-effect p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font">Senarai Alasan Penghakiman</h2>
+        <div class="overflow-x-auto">
+         <table class="w-full">
+          <thead>
+           <tr class="border-b-2 border-gray-200">
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Unit/Daerah</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Peringkat</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Bulan</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Bilangan</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Maklumat Kes</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Link</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700"></th>
+           </tr>
+          </thead>
+          <tbody id="dataAlasan">
+           <tr>
+            <td colspan="7" class="py-12 text-center text-gray-400 font-medium">Tiada rekod</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Kertas Tab -->
+    <div id="kertas" class="tab-content hidden">
+     <div class="grid lg:grid-cols-3 gap-6"><!-- Form -->
+      <div class="lg:col-span-1">
+       <div class="card glass-effect p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font flex items-center gap-2">
+         <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+          </svg>
+         </div> Tambah Kertas</h2>
+        <form id="formKertas" class="space-y-4">
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Unit/Daerah</label> <input type="text" name="mahkamahDaerah" class="form-input w-full p-3 rounded-xl" placeholder="Contoh: Unit Kuala Lumpur" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Peringkat</label> <select name="peringkatMahkamah" id="peringkatAlasan" class="form-input w-full p-3 rounded-xl" required> <option value="">Pilih Peringkat</option> <option value="Mahkamah Tinggi Syariah">Mahkamah Tinggi Syariah</option> <option value="Mahkamah Rendah Syariah">Mahkamah Rendah Syariah</option> </select>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">No Kes</label> <input type="text" name="noKes" class="form-input w-full p-3 rounded-xl" placeholder="Contoh: 123/2024" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Kategori Kes</label> <select name="kategoriKes" class="form-input w-full p-3 rounded-xl" required> <option value="">Pilih Kategori</option> <option value="Mal">Mal</option> <option value="Jenayah">Jenayah</option> </select>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">No Siri</label> <input type="text" name="noSiri" class="form-input w-full p-3 rounded-xl" placeholder="No Siri" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Tarikh Dikeluarkan</label> <input type="date" name="tarikhDikeluarkan" class="form-input w-full p-3 rounded-xl" required>
+         </div>
+         <div><label class="block text-sm font-semibold text-gray-700 mb-2">Status Penggunaan</label> <select name="statusPenggunaan" class="form-input w-full p-3 rounded-xl" required id="statusSelect"> <option value="">Pilih Status</option> <option value="Digunakan">Digunakan</option> <option value="Rosak">Rosak</option> <option value="Batal">Batal</option> </select>
+         </div>
+         <div id="alasanField" class="hidden"><label class="block text-sm font-semibold text-gray-700 mb-2">Alasan (Rosak/Batal)</label> <textarea name="alasan" class="form-input w-full p-3 rounded-xl" placeholder="Sila nyatakan alasan..." rows="3"></textarea>
+         </div><button type="submit" id="submitKertas" class="btn-success w-full text-white px-6 py-3 rounded-xl font-bold"> Hantar Rekod </button>
+        </form>
+       </div>
+      </div><!-- Table -->
+      <div class="lg:col-span-2">
+       <div class="card glass-effect p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font">Senarai Kertas Perintah</h2>
+        <div class="overflow-x-auto">
+         <table class="w-full">
+          <thead>
+           <tr class="border-b-2 border-gray-200">
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Unit/Daerah</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Peringkat</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">No Kes</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Kategori</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">No Siri</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Status</th>
+            <th class="text-left py-4 px-4 text-sm font-bold text-gray-700"></th>
+           </tr>
+          </thead>
+          <tbody id="dataKertas">
+           <tr>
+            <td colspan="7" class="py-12 text-center text-gray-400 font-medium">Tiada rekod</td>
+           </tr>
+          </tbody>
+         </table>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Tetapan Tab -->
+    <div id="tetapan" class="tab-content hidden">
+     <div class="grid lg:grid-cols-2 gap-6"><!-- Link Muat Naik -->
+      <div class="card glass-effect p-6">
+       <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+         </svg>
+        </div> Tetapan Link</h2>
+       <form id="formLink" class="space-y-4">
+        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Link Mahkamah Tinggi Syariah</label> <input type="url" id="linkMTS" name="linkMTS" class="form-input w-full p-3 rounded-xl" placeholder="https://...">
+        </div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Link Mahkamah Rendah Syariah</label> <input type="url" id="linkMRS" name="linkMRS" class="form-input w-full p-3 rounded-xl" placeholder="https://...">
+        </div><button type="submit" id="submitLink" class="btn-primary w-full text-white px-6 py-3 rounded-xl font-bold"> Simpan Link </button>
+       </form>
+      </div><!-- Pengurusan Pengguna -->
+      <div class="card glass-effect p-6">
+       <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font flex items-center gap-2">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+         </svg>
+        </div> Tambah Pengguna</h2>
+       <form id="formUser" class="space-y-4">
+        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Nama Penuh</label> <input type="text" name="nama" class="form-input w-full p-3 rounded-xl" placeholder="Nama pengguna" required>
+        </div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Emel</label> <input type="email" name="email" class="form-input w-full p-3 rounded-xl" placeholder="nama@esyariah.gov.my" required>
+        </div>
+        <div><label class="block text-sm font-semibold text-gray-700 mb-2">Jawatan</label> <input type="text" name="jawatan" class="form-input w-full p-3 rounded-xl" placeholder="Contoh: Pembantu Tadbir" required>
+        </div>
+        <div class="flex items-center gap-3 p-3 rounded-xl" style="background: rgba(102, 126, 234, 0.05);"><input type="checkbox" id="isAdmin" name="isAdmin" class="w-5 h-5 rounded border-2" style="accent-color: #667eea;"> <label for="isAdmin" class="text-sm font-semibold text-gray-700">Admin (Akses penuh)</label>
+        </div><button type="submit" id="submitUser" class="btn-success w-full text-white px-6 py-3 rounded-xl font-bold"> Tambah Pengguna </button>
+       </form>
+      </div>
+     </div><!-- Senarai Pengguna -->
+     <div class="card glass-effect p-6 mt-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-5 heading-font">Senarai Pengguna</h2>
+      <div class="overflow-x-auto">
+       <table class="w-full">
+        <thead>
+         <tr class="border-b-2 border-gray-200">
+          <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Nama</th>
+          <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Emel</th>
+          <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Jawatan</th>
+          <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Peranan</th>
+          <th class="text-left py-4 px-4 text-sm font-bold text-gray-700">Tindakan</th>
+         </tr>
+        </thead>
+        <tbody id="dataUsers">
+         <tr>
+          <td colspan="5" class="py-12 text-center text-gray-400 font-medium">Tiada pengguna</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Toast Container -->
+  <div id="toastContainer"></div>
+  <script>
+// Default configuration
+const defaultConfig = {
+  dashboard_title: 'e-REKOD',
+  alasan_tab_label: 'Alasan Penghakiman',
+  kertas_tab_label: 'Kertas Perintah',
+  background_color: '#f5f7fa',
+  surface_color: '#ffffff',
+  text_color: '#1f2937',
+  primary_action: '#667eea',
+  secondary_action: '#4facfe'
+};
+
+// Application state
+let allRecords = [];
+let deleteConfirmId = null;
+let currentUser = null;
+let settingsData = null;
+
+// Login handler
+function setupLogin() {
+  const loginForm = document.getElementById('loginForm');
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.toLowerCase().trim();
+    
+    // Allow rekodsbh@gmail.com to log in
+    if (!email.endsWith('@esyariah.gov.my') && email !== 'rekodsbh@gmail.com') {
+      showToast('Sila gunakan emel @esyariah.gov.my', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>';
+
+    // Check if user exists
+    const users = allRecords.filter(r => r.type === 'user');
+    let user = users.find(u => u.email.toLowerCase() === email);
+
+    if (!user) {
+      // Create default user if doesn't exist
+      const isAdmin = email === 'admin@esyariah.gov.my' || email === 'rekodsbh@gmail.com';
+      const newUser = {
+        type: 'user',
+        email: email,
+        nama: isAdmin ? 'Administrator' : email.split('@')[0],
+        jawatan: isAdmin ? 'Administrator Sistem' : 'Pengguna',
+        isAdmin: isAdmin ? 'true' : 'false',
+        createdAt: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(newUser);
+      if (result.isOk) {
+        // Wait for onDataChanged to update
+        await new Promise(resolve => setTimeout(resolve, 800));
+        user = allRecords.find(u => u.type === 'user' && u.email.toLowerCase() === email);
+      }
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Log Masuk ke Sistem';
+
+    if (user) {
+      currentUser = user;
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      
+      // Update header with user info
+      document.getElementById('userInfo').innerHTML = `
+        <div class="flex items-center gap-3 px-4 py-2 rounded-xl glass-effect">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center icon-gradient shadow-lg">
+            <span class="text-white text-sm font-bold">${user.nama.charAt(0).toUpperCase()}</span>
+          </div>
+          <div class="text-left">
+            <p class="text-sm font-bold text-gray-800">${user.nama}</p>
+            <p class="text-xs text-gray-600">${user.jawatan}${user.isAdmin === 'true' ? ' 🔑' : ''}</p>
+          </div>
+        </div>
+      `;
+
+      // Hide/show tetapan tab based on admin status
+      const tetapanTab = document.getElementById('tetapanTab');
+      const tetapanContent = document.getElementById('tetapan');
+      
+      if (user.isAdmin === 'true') {
+        tetapanTab.classList.remove('hidden');
+        tetapanContent.classList.remove('hidden');
+      } else {
+        tetapanTab.classList.add('hidden');
+        tetapanContent.classList.add('hidden');
+      }
+
+      showToast('Selamat datang, ' + user.nama + (user.isAdmin === 'true' ? ' (Admin)' : ''), 'success');
+    } else {
+      showToast('Gagal log masuk', 'error');
+    }
+  });
+}
+
+// Logout handler
+function logout() {
+  currentUser = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginEmail').value = '';
+  showToast('Anda telah log keluar', 'success');
+}
+
+// Render reports
+function renderReports(records) {
+  const alasanRecords = records.filter(r => r.type === 'alasan');
+  const kertasRecords = records.filter(r => r.type === 'kertas');
+  const userRecords = records.filter(r => r.type === 'user');
+
+  // Update totals
+  document.getElementById('totalAlasan').textContent = alasanRecords.length;
+  document.getElementById('totalKertas').textContent = kertasRecords.length;
+  document.getElementById('totalUsers').textContent = userRecords.length;
+
+  // Group by mahkamah
+  const mahkamahGroups = {};
+  [...alasanRecords, ...kertasRecords].forEach(r => {
+    const mahkamah = r.mahkamahDaerah || 'Tidak Dinyatakan';
+    if (!mahkamahGroups[mahkamah]) {
+      mahkamahGroups[mahkamah] = { alasan: 0, kertas: 0 };
+    }
+    if (r.type === 'alasan') mahkamahGroups[mahkamah].alasan++;
+    else mahkamahGroups[mahkamah].kertas++;
+  });
+
+  const laporanMahkamah = document.getElementById('laporanMahkamah');
+  laporanMahkamah.innerHTML = Object.entries(mahkamahGroups).map(([mahkamah, data]) => `
+    <div class="flex items-center justify-between p-4 rounded-xl" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);">
+      <span class="font-semibold text-gray-800">${mahkamah}</span>
+      <div class="flex gap-4">
+        <span class="text-sm font-bold px-3 py-1 rounded-lg" style="color: #667eea; background: rgba(102, 126, 234, 0.15);">${data.alasan} Alasan</span>
+        <span class="text-sm font-bold px-3 py-1 rounded-lg" style="color: #4facfe; background: rgba(79, 172, 254, 0.15);">${data.kertas} Kertas</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Group by status
+  const statusGroups = { Digunakan: 0, Rosak: 0, Batal: 0 };
+  kertasRecords.forEach(r => {
+    if (statusGroups.hasOwnProperty(r.statusPenggunaan)) {
+      statusGroups[r.statusPenggunaan]++;
+    }
+  });
+
+  const laporanStatus = document.getElementById('laporanStatus');
+  laporanStatus.innerHTML = Object.entries(statusGroups).map(([status, count]) => {
+    let gradientClass = 'background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); color: #166534;';
+    if (status === 'Rosak') gradientClass = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: #ffffff;';
+    else if (status === 'Batal') gradientClass = 'background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #92400e;';
+    
+    return `
+    <div class="flex items-center justify-between p-4 rounded-xl" style="background: rgba(0, 0, 0, 0.02);">
+      <span class="status-badge" style="${gradientClass}">${status}</span>
+      <span class="text-3xl font-bold heading-font text-gray-800">${count}</span>
+    </div>
+  `}).join('');
+}
+
+// Render users table
+function renderUsersTable(records) {
+  const tbody = document.getElementById('dataUsers');
+  const userRecords = records.filter(r => r.type === 'user');
+  
+  if (userRecords.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="py-12 text-center text-gray-400 font-medium">Tiada pengguna</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = userRecords.map(user => `
+    <tr class="table-row border-b border-gray-100" data-id="${user.__backendId}">
+      <td class="py-4 px-4 text-gray-800 font-medium">${user.nama || '-'}</td>
+      <td class="py-4 px-4 text-gray-600">${user.email || '-'}</td>
+      <td class="py-4 px-4 text-gray-600">${user.jawatan || '-'}</td>
+      <td class="py-4 px-4">
+        <span class="status-badge" style="${user.isAdmin === 'true' ? 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;' : 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;'}">
+          ${user.isAdmin === 'true' ? 'Admin' : 'Pengguna'}
+        </span>
+      </td>
+      <td class="py-4 px-4">
+        ${deleteConfirmId === user.__backendId ? `
+          <div class="confirm-delete">
+            <span class="text-sm text-red-600 font-bold">Padam?</span>
+            <button onclick="confirmDelete('${user.__backendId}')" class="text-red-600 hover:text-red-800 text-sm font-bold">Ya</button>
+            <button onclick="cancelDelete()" class="text-gray-500 hover:text-gray-700 text-sm font-bold">Batal</button>
+          </div>
+        ` : `
+          <button onclick="initiateDelete('${user.__backendId}')" class="delete-btn text-red-500 hover:text-red-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        `}
+      </td>
+    </tr>
+  `).join('');
+}
+
+// Show toast notification
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// Render Alasan table
+function renderAlasanTable(records) {
+  const tbody = document.getElementById('dataAlasan');
+  const alasanRecords = records.filter(r => r.type === 'alasan');
+  
+  if (alasanRecords.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-gray-400 font-medium">Tiada rekod</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = alasanRecords.map(record => {
+    const bulanFormatted = record.bulan ? new Date(record.bulan + '-01').toLocaleDateString('ms-MY', { year: 'numeric', month: 'long' }) : '-';
+    
+    // Parse maklumat kes (stored as JSON string)
+    let kesList = [];
+    try {
+      kesList = JSON.parse(record.maklumatKes || '[]');
+    } catch (e) {
+      kesList = [];
+    }
+    
+    const kesHTML = kesList.length > 0 ? kesList.map(kes => `
+      <div class="mb-2 pb-2 border-b border-gray-100 last:border-0">
+        <div class="grid grid-cols-12 gap-2 text-sm">
+          <div class="col-span-5 font-semibold text-gray-800">${kes.noKes}</div>
+          <div class="col-span-7 text-gray-600">${kes.jenisTuntutan}</div>
+        </div>
+      </div>
+    `).join('') : '<span class="text-gray-400 text-sm">-</span>';
+    
+    return `
+    <tr class="table-row border-b border-gray-100" data-id="${record.__backendId}">
+      <td class="py-4 px-4 text-gray-800 font-medium">${record.mahkamahDaerah || '-'}</td>
+      <td class="py-4 px-4 text-gray-600 text-sm">${record.peringkatMahkamah || '-'}</td>
+      <td class="py-4 px-4 text-gray-600">${bulanFormatted}</td>
+      <td class="py-4 px-4 text-center">
+        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl font-bold text-base" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+          ${record.bilanganAlasan || 0}
+        </span>
+      </td>
+      <td class="py-4 px-4">
+        <div class="space-y-1">${kesHTML}</div>
+      </td>
+      <td class="py-4 px-4">
+        ${record.linkMuatNaik ? `<a href="${record.linkMuatNaik}" target="_blank" rel="noopener noreferrer" class="font-semibold flex items-center gap-1" style="color: #667eea;">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+          Lihat
+        </a>` : '-'}
+      </td>
+      <td class="py-4 px-4">
+        ${deleteConfirmId === record.__backendId ? `
+          <div class="confirm-delete">
+            <span class="text-sm text-red-600 font-bold">Padam?</span>
+            <button onclick="confirmDelete('${record.__backendId}')" class="text-red-600 hover:text-red-800 text-sm font-bold">Ya</button>
+            <button onclick="cancelDelete()" class="text-gray-500 hover:text-gray-700 text-sm font-bold">Batal</button>
+          </div>
+        ` : `
+          <button onclick="initiateDelete('${record.__backendId}')" class="delete-btn text-red-500 hover:text-red-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        `}
+      </td>
+    </tr>
+  `}).join('');
+}
+
+// Render Kertas table
+function renderKertasTable(records) {
+  const tbody = document.getElementById('dataKertas');
+  const kertasRecords = records.filter(r => r.type === 'kertas');
+  
+  if (kertasRecords.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="py-12 text-center text-gray-400 font-medium">Tiada rekod</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = kertasRecords.map(record => {
+    let statusStyle = 'background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); color: #166534;';
+    if (record.statusPenggunaan === 'Rosak') statusStyle = 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;';
+    else if (record.statusPenggunaan === 'Batal') statusStyle = 'background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #92400e;';
+    
+    return `
+    <tr class="table-row border-b border-gray-100" data-id="${record.__backendId}">
+      <td class="py-4 px-4 text-gray-800 font-medium">${record.mahkamahDaerah || '-'}</td>
+      <td class="py-4 px-4 text-gray-600 text-sm">${record.peringkatMahkamah || '-'}</td>
+      <td class="py-4 px-4 text-gray-800 font-medium">${record.noKes || '-'}</td>
+      <td class="py-4 px-4">
+        <span class="status-badge" style="${record.kategoriKes === 'Mal' ? 'background: linear-gradient(135deg, #a78bfa 0%, #c084fc 100%); color: white;' : 'background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); color: white;'}">
+          ${record.kategoriKes || '-'}
+        </span>
+      </td>
+      <td class="py-4 px-4 text-gray-600">${record.noSiri || '-'}</td>
+      <td class="py-4 px-4">
+        <div>
+          <span class="status-badge" style="${statusStyle}">
+            ${record.statusPenggunaan || '-'}
+          </span>
+          ${record.alasan ? `<p class="text-xs text-gray-500 mt-2 italic">${record.alasan}</p>` : ''}
+        </div>
+      </td>
+      <td class="py-4 px-4">
+        ${deleteConfirmId === record.__backendId ? `
+          <div class="confirm-delete">
+            <span class="text-sm text-red-600 font-bold">Padam?</span>
+            <button onclick="confirmDelete('${record.__backendId}')" class="text-red-600 hover:text-red-800 text-sm font-bold">Ya</button>
+            <button onclick="cancelDelete()" class="text-gray-500 hover:text-gray-700 text-sm font-bold">Batal</button>
+          </div>
+        ` : `
+          <button onclick="initiateDelete('${record.__backendId}')" class="delete-btn text-red-500 hover:text-red-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </button>
+        `}
+      </td>
+    </tr>
+  `}).join('');
+}
+
+// Delete functions
+function initiateDelete(id) {
+  deleteConfirmId = id;
+  renderAlasanTable(allRecords);
+  renderKertasTable(allRecords);
+  renderUsersTable(allRecords);
+}
+
+function cancelDelete() {
+  deleteConfirmId = null;
+  renderAlasanTable(allRecords);
+  renderKertasTable(allRecords);
+  renderUsersTable(allRecords);
+}
+
+async function confirmDelete(id) {
+  const record = allRecords.find(r => r.__backendId === id);
+  if (!record) return;
+
+  const result = await window.dataSdk.delete(record);
+  if (result.isOk) {
+    showToast('Rekod berjaya dipadam', 'success');
+  } else {
+    showToast('Gagal memadam rekod', 'error');
+  }
+  deleteConfirmId = null;
+}
+
+// Update record count
+function updateRecordCount(count) {
+  document.getElementById('recordCount').textContent = `${count} Rekod`;
+}
+
+// Tab switching
+function setupTabs() {
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabId = btn.dataset.tab;
+      
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.add('hidden'));
+      
+      btn.classList.add('active');
+      document.getElementById(tabId).classList.remove('hidden');
+    });
+  });
+}
+
+// Form submissions
+function setupForms() {
+  const formAlasan = document.getElementById('formAlasan');
+  const formKertas = document.getElementById('formKertas');
+  const formUser = document.getElementById('formUser');
+  const formLink = document.getElementById('formLink');
+  const statusSelect = document.getElementById('statusSelect');
+  const alasanField = document.getElementById('alasanField');
+  const addKesBtn = document.getElementById('addKesBtn');
+  const kesContainer = document.getElementById('kesContainer');
+
+  // Add new kes row
+  addKesBtn.addEventListener('click', () => {
+    const newRow = document.createElement('div');
+    newRow.className = 'kes-row grid grid-cols-12 gap-2';
+    newRow.innerHTML = `
+      <input type="text" name="noKes[]" class="form-input col-span-5 p-2 rounded-lg text-sm" placeholder="No Kes" required>
+      <input type="text" name="jenisTuntutan[]" class="form-input col-span-6 p-2 rounded-lg text-sm" placeholder="Jenis Tuntutan" required>
+      <button type="button" class="remove-kes-btn col-span-1 text-red-500 hover:text-red-700 transition-opacity">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    `;
+    kesContainer.appendChild(newRow);
+    updateRemoveButtons();
+  });
+
+  // Remove kes row
+  kesContainer.addEventListener('click', (e) => {
+    const removeBtn = e.target.closest('.remove-kes-btn');
+    if (removeBtn) {
+      const row = removeBtn.closest('.kes-row');
+      if (kesContainer.children.length > 1) {
+        row.remove();
+        updateRemoveButtons();
+      }
+    }
+  });
+
+  // Update remove buttons visibility
+  function updateRemoveButtons() {
+    const rows = kesContainer.querySelectorAll('.kes-row');
+    rows.forEach((row, index) => {
+      const removeBtn = row.querySelector('.remove-kes-btn');
+      if (rows.length === 1) {
+        removeBtn.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        removeBtn.classList.remove('opacity-0', 'pointer-events-none');
+      }
+    });
+  }
+
+  // Show/hide alasan field based on status selection
+  statusSelect.addEventListener('change', (e) => {
+    if (e.target.value === 'Rosak' || e.target.value === 'Batal') {
+      alasanField.classList.remove('hidden');
+      alasanField.querySelector('textarea').required = true;
+    } else {
+      alasanField.classList.add('hidden');
+      alasanField.querySelector('textarea').required = false;
+    }
+  });
+
+  // Auto-populate link based on peringkat mahkamah for Alasan form
+  const peringkatAlasan = document.getElementById('peringkatAlasan');
+  const linkMuatNaikAlasan = document.getElementById('linkMuatNaikAlasan');
+  
+  peringkatAlasan.addEventListener('change', (e) => {
+    const peringkat = e.target.value;
+    let defaultLink = '';
+    
+    if (peringkat === 'Mahkamah Tinggi Syariah' && settingsData?.linkMuatNaikMTS) {
+      defaultLink = settingsData.linkMuatNaikMTS;
+    } else if (peringkat === 'Mahkamah Rendah Syariah' && settingsData?.linkMuatNaikMRS) {
+      defaultLink = settingsData.linkMuatNaikMRS;
+    }
+    
+    linkMuatNaikAlasan.value = defaultLink;
+  });
+
+  formAlasan.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (allRecords.length >= 999) {
+      showToast('Had maksimum 999 rekod telah dicapai', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('submitAlasan');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>';
+
+    const formData = new FormData(e.target);
+    
+    // Collect all kes data
+    const noKesList = formData.getAll('noKes[]');
+    const jenisTuntutanList = formData.getAll('jenisTuntutan[]');
+    const maklumatKes = noKesList.map((noKes, index) => ({
+      noKes: noKes,
+      jenisTuntutan: jenisTuntutanList[index]
+    }));
+
+    const record = {
+      type: 'alasan',
+      mahkamahDaerah: formData.get('mahkamahDaerah'),
+      peringkatMahkamah: formData.get('peringkatMahkamah'),
+      bulan: formData.get('bulan'),
+      bilanganAlasan: formData.get('bilanganAlasan'),
+      maklumatKes: JSON.stringify(maklumatKes),
+      linkMuatNaik: formData.get('linkMuatNaik') || '',
+      createdAt: new Date().toISOString()
+    };
+
+    const result = await window.dataSdk.create(record);
+    
+    btn.disabled = false;
+    btn.textContent = 'Hantar Alasan';
+
+    if (result.isOk) {
+      showToast('Alasan berjaya ditambah', 'success');
+      formAlasan.reset();
+      
+      // Sync to Google Sheets
+      await syncToGoogleSheets(record, 'create');
+      
+      // Reset to single row
+      kesContainer.innerHTML = `
+        <div class="kes-row grid grid-cols-12 gap-2">
+          <input type="text" name="noKes[]" class="form-input col-span-5 p-2 rounded-lg text-sm" placeholder="No Kes" required>
+          <input type="text" name="jenisTuntutan[]" class="form-input col-span-6 p-2 rounded-lg text-sm" placeholder="Jenis Tuntutan" required>
+          <button type="button" class="remove-kes-btn col-span-1 text-red-500 hover:text-red-700 opacity-0 pointer-events-none transition-opacity">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      `;
+    } else {
+      showToast('Gagal menambah alasan', 'error');
+    }
+  });
+
+  formKertas.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (allRecords.length >= 999) {
+      showToast('Had maksimum 999 rekod telah dicapai', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('submitKertas');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>';
+
+    const formData = new FormData(e.target);
+    const record = {
+      type: 'kertas',
+      mahkamahDaerah: formData.get('mahkamahDaerah'),
+      peringkatMahkamah: formData.get('peringkatMahkamah'),
+      noKes: formData.get('noKes'),
+      kategoriKes: formData.get('kategoriKes'),
+      noSiri: formData.get('noSiri'),
+      tarikhDikeluarkan: formData.get('tarikhDikeluarkan'),
+      statusPenggunaan: formData.get('statusPenggunaan'),
+      alasan: formData.get('alasan') || '',
+      createdAt: new Date().toISOString()
+    };
+
+    const result = await window.dataSdk.create(record);
+    
+    btn.disabled = false;
+    btn.textContent = 'Hantar Rekod';
+
+    if (result.isOk) {
+      showToast('Rekod berjaya ditambah', 'success');
+      formKertas.reset();
+      alasanField.classList.add('hidden');
+      alasanField.querySelector('textarea').required = false;
+      
+      // Sync to Google Sheets
+      await syncToGoogleSheets(record, 'create');
+    } else {
+      showToast('Gagal menambah rekod', 'error');
+    }
+  });
+
+  // Form User
+  formUser.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (allRecords.length >= 999) {
+      showToast('Had maksimum 999 rekod telah dicapai', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('submitUser');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>';
+
+    const formData = new FormData(e.target);
+    const email = formData.get('email');
+
+    if (!email.endsWith('@esyariah.gov.my')) {
+      showToast('Emel mesti @esyariah.gov.my', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Tambah Pengguna';
+      return;
+    }
+
+    // Check if user already exists
+    const existingUser = allRecords.find(r => r.type === 'user' && r.email === email);
+    if (existingUser) {
+      showToast('Pengguna sudah wujud', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Tambah Pengguna';
+      return;
+    }
+
+    const record = {
+      type: 'user',
+      nama: formData.get('nama'),
+      email: email,
+      jawatan: formData.get('jawatan'),
+      isAdmin: formData.get('isAdmin') ? 'true' : 'false',
+      createdAt: new Date().toISOString()
+    };
+
+    const result = await window.dataSdk.create(record);
+    
+    btn.disabled = false;
+    btn.textContent = 'Tambah Pengguna';
+
+    if (result.isOk) {
+      showToast('Pengguna berjaya ditambah', 'success');
+      formUser.reset();
+    } else {
+      showToast('Gagal menambah pengguna', 'error');
+    }
+  });
+
+  // Form Link
+  formLink.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const btn = document.getElementById('submitLink');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>';
+
+    const formData = new FormData(e.target);
+    
+    // Check if settings record exists
+    let settingsRecord = allRecords.find(r => r.type === 'settings');
+    
+    const settingsData = {
+      type: 'settings',
+      linkMuatNaikMTS: formData.get('linkMTS') || '',
+      linkMuatNaikMRS: formData.get('linkMRS') || '',
+      createdAt: settingsRecord ? settingsRecord.createdAt : new Date().toISOString()
+    };
+
+    let result;
+    if (settingsRecord) {
+      result = await window.dataSdk.update({ ...settingsData, __backendId: settingsRecord.__backendId });
+    } else {
+      result = await window.dataSdk.create(settingsData);
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Simpan Link';
+
+    if (result.isOk) {
+      showToast('Link berjaya disimpan', 'success');
+    } else {
+      showToast('Gagal menyimpan link', 'error');
+    }
+  });
+}
+
+// Google Apps Script URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwZT27N7dosj1qps1f0_mkLeC3bAh7DoMklCwzW4wuzFzQJzRut_ly0JFP8RoCxWb8D4w/exec';
+
+// Sync data to Google Sheets
+async function syncToGoogleSheets(record, action = 'create') {
+  try {
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: action,
+        type: record.type,
+        data: record
+      })
+    });
+    
+    // Note: no-cors mode doesn't allow reading response, but request is sent
+    console.log('Data synced to Google Sheets');
+  } catch (error) {
+    console.error('Failed to sync to Google Sheets:', error);
+  }
+}
+
+// Data handler for SDK
+const dataHandler = {
+  onDataChanged(data) {
+    allRecords = data;
+    renderAlasanTable(data);
+    renderKertasTable(data);
+    renderUsersTable(data);
+    renderReports(data);
+    updateRecordCount(data.filter(r => r.type === 'alasan' || r.type === 'kertas').length);
+    
+    // Load settings data
+    const settings = data.find(r => r.type === 'settings');
+    if (settings) {
+      settingsData = settings;
+      document.getElementById('linkMTS').value = settings.linkMuatNaikMTS || '';
+      document.getElementById('linkMRS').value = settings.linkMuatNaikMRS || '';
+    }
+  }
+};
+
+// Config change handler
+async function onConfigChange(config) {
+  const title = config.dashboard_title || defaultConfig.dashboard_title;
+  const alasanLabel = config.alasan_tab_label || defaultConfig.alasan_tab_label;
+  const kertasLabel = config.kertas_tab_label || defaultConfig.kertas_tab_label;
+  
+  const bgColor = config.background_color || defaultConfig.background_color;
+  const surfaceColor = config.surface_color || defaultConfig.surface_color;
+  const textColor = config.text_color || defaultConfig.text_color;
+  const primaryAction = config.primary_action || defaultConfig.primary_action;
+  const secondaryAction = config.secondary_action || defaultConfig.secondary_action;
+
+  const titleElements = document.querySelectorAll('#dashboardTitle');
+  titleElements.forEach(el => {
+    el.textContent = title;
+  });
+  
+  document.getElementById('alasanTabLabel').textContent = alasanLabel;
+  document.getElementById('kertasTabLabel').textContent = kertasLabel;
+
+  document.body.style.background = `linear-gradient(135deg, ${bgColor} 0%, ${bgColor}dd 100%)`;
+  
+  document.querySelectorAll('.card').forEach(card => {
+    card.style.backgroundColor = surfaceColor;
+  });
+  
+  document.querySelectorAll('h1, h2, h3, .text-gray-800').forEach(el => {
+    el.style.color = textColor;
+  });
+  
+  document.querySelectorAll('.btn-primary, .icon-gradient').forEach(btn => {
+    btn.style.background = `linear-gradient(135deg, ${primaryAction} 0%, ${primaryAction}dd 100%)`;
+  });
+  
+  document.querySelectorAll('.btn-success').forEach(btn => {
+    btn.style.background = `linear-gradient(135deg, ${secondaryAction} 0%, ${secondaryAction}dd 100%)`;
+  });
+}
+
+// Initialize Element SDK
+if (window.elementSdk) {
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange,
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        {
+          get: () => config.background_color || defaultConfig.background_color,
+          set: (value) => window.elementSdk.setConfig({ background_color: value })
+        },
+        {
+          get: () => config.surface_color || defaultConfig.surface_color,
+          set: (value) => window.elementSdk.setConfig({ surface_color: value })
+        },
+        {
+          get: () => config.text_color || defaultConfig.text_color,
+          set: (value) => window.elementSdk.setConfig({ text_color: value })
+        },
+        {
+          get: () => config.primary_action || defaultConfig.primary_action,
+          set: (value) => window.elementSdk.setConfig({ primary_action: value })
+        },
+        {
+          get: () => config.secondary_action || defaultConfig.secondary_action,
+          set: (value) => window.elementSdk.setConfig({ secondary_action: value })
+        }
+      ],
+      borderables: [],
+      fontEditable: undefined,
+      fontSizeable: undefined
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ['dashboard_title', config.dashboard_title || defaultConfig.dashboard_title],
+      ['alasan_tab_label', config.alasan_tab_label || defaultConfig.alasan_tab_label],
+      ['kertas_tab_label', config.kertas_tab_label || defaultConfig.kertas_tab_label]
+    ])
+  });
+}
+
+// Initialize Data SDK
+async function initApp() {
+  setupTabs();
+  setupForms();
+  setupLogin();
+
+  if (window.dataSdk) {
+    const result = await window.dataSdk.init(dataHandler);
+    if (!result.isOk) {
+      console.error('Failed to initialize data SDK');
+    }
+  }
+}
+
+initApp();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c0a74e00324b2e8',t:'MTc2ODg2ODk1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
